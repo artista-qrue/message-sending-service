@@ -24,6 +24,16 @@ func NewSchedulerHandler(schedulerUseCase usecases.SchedulerUseCase, logger *zap
 	}
 }
 
+// StartScheduler godoc
+// @Summary Start the message scheduler
+// @Description Start automatic message sending scheduler
+// @Tags scheduler
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.SuccessResponse{data=dto.StartSchedulerResponse}
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /scheduler/start [post]
 func (h *SchedulerHandler) StartScheduler(c *gin.Context) {
 	err := h.schedulerUseCase.StartScheduler(c.Request.Context())
 	if err != nil {
@@ -45,6 +55,16 @@ func (h *SchedulerHandler) StartScheduler(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.NewSuccessResponse("Scheduler started successfully", response))
 }
 
+// StopScheduler godoc
+// @Summary Stop the message scheduler
+// @Description Stop automatic message sending scheduler
+// @Tags scheduler
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.SuccessResponse{data=dto.StopSchedulerResponse}
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /scheduler/stop [post]
 func (h *SchedulerHandler) StopScheduler(c *gin.Context) {
 	err := h.schedulerUseCase.StopScheduler(c.Request.Context())
 	if err != nil {
@@ -66,6 +86,15 @@ func (h *SchedulerHandler) StopScheduler(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.NewSuccessResponse("Scheduler stopped successfully", response))
 }
 
+// GetSchedulerStatus godoc
+// @Summary Get scheduler status
+// @Description Get current status of the message scheduler
+// @Tags scheduler
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.SuccessResponse{data=dto.SchedulerStatusResponse}
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /scheduler/status [get]
 func (h *SchedulerHandler) GetSchedulerStatus(c *gin.Context) {
 	status, err := h.schedulerUseCase.GetSchedulerStatus(c.Request.Context())
 	if err != nil {

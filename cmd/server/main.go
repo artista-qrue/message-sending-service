@@ -13,6 +13,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 
+	_ "message-sending-service/docs"
 	"message-sending-service/internal/application/handlers"
 	"message-sending-service/internal/application/usecases"
 	"message-sending-service/internal/domain/repositories"
@@ -25,6 +26,22 @@ import (
 	"message-sending-service/pkg/logger"
 )
 
+// @title Message Sending Service API
+// @version 1.0
+// @description Automatic message sending system with scheduler functionality
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
+
+// @host localhost:8080
+// @BasePath /api/v1
+
+// @schemes http https
 func main() {
 	cfg, err := config.Load()
 	if err != nil {

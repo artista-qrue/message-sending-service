@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/messages": {
+        "/messages": {
             "post": {
                 "description": "Create a new message to be sent",
                 "consumes": [
@@ -82,9 +82,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/messages/sent": {
+        "/messages/sent": {
             "get": {
-                "description": "Get a list of sent messages with pagination",
+                "description": "Retrieve a list of sent messages with pagination",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -142,9 +145,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/messages/stats": {
+        "/messages/stats": {
             "get": {
-                "description": "Get statistics about messages (total, pending, sent, failed)",
+                "description": "Get statistics about messages (total, sent, pending, failed)",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -180,9 +186,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/messages/{id}": {
+        "/messages/{id}": {
             "get": {
-                "description": "Get a message by its ID",
+                "description": "Get a specific message by its ID",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -239,16 +248,19 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/messages/{id}/send": {
+        "/messages/{id}/send": {
             "post": {
-                "description": "Manually send a pending message by its ID",
+                "description": "Send a message by its ID",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "messages"
                 ],
-                "summary": "Send a specific message manually",
+                "summary": "Send a specific message",
                 "parameters": [
                     {
                         "type": "string",
@@ -262,7 +274,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.SuccessResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/dto.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.MessageResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -286,9 +310,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/scheduler/start": {
+        "/scheduler/start": {
             "post": {
                 "description": "Start automatic message sending scheduler",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -330,9 +357,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/scheduler/status": {
+        "/scheduler/status": {
             "get": {
                 "description": "Get current status of the message scheduler",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -368,9 +398,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/scheduler/stop": {
+        "/scheduler/stop": {
             "post": {
                 "description": "Stop automatic message sending scheduler",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],

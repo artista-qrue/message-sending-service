@@ -27,6 +27,17 @@ func NewMessageHandler(messageUseCase usecases.MessageUseCase, logger *zap.Logge
 	}
 }
 
+// CreateMessage godoc
+// @Summary Create a new message
+// @Description Create a new message to be sent
+// @Tags messages
+// @Accept json
+// @Produce json
+// @Param message body dto.CreateMessageRequest true "Message data"
+// @Success 201 {object} dto.SuccessResponse{data=dto.MessageResponse}
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /messages [post]
 func (h *MessageHandler) CreateMessage(c *gin.Context) {
 	var req dto.CreateMessageRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -51,6 +62,18 @@ func (h *MessageHandler) CreateMessage(c *gin.Context) {
 	c.JSON(http.StatusCreated, dto.NewSuccessResponse("Message created successfully", response))
 }
 
+// GetMessage godoc
+// @Summary Get a message by ID
+// @Description Get a specific message by its ID
+// @Tags messages
+// @Accept json
+// @Produce json
+// @Param id path string true "Message ID"
+// @Success 200 {object} dto.SuccessResponse{data=dto.MessageResponse}
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /messages/{id} [get]
 func (h *MessageHandler) GetMessage(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
@@ -75,6 +98,18 @@ func (h *MessageHandler) GetMessage(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.NewSuccessResponse("Message retrieved successfully", response))
 }
 
+// GetSentMessages godoc
+// @Summary Get sent messages
+// @Description Retrieve a list of sent messages with pagination
+// @Tags messages
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(10)
+// @Success 200 {object} dto.SuccessResponse{data=dto.GetSentMessagesResponse}
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /messages/sent [get]
 func (h *MessageHandler) GetSentMessages(c *gin.Context) {
 	var query dto.PaginationQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
@@ -107,6 +142,15 @@ func (h *MessageHandler) GetSentMessages(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.NewSuccessResponse("Sent messages retrieved successfully", response))
 }
 
+// GetMessageStats godoc
+// @Summary Get message statistics
+// @Description Get statistics about messages (total, sent, pending, failed)
+// @Tags messages
+// @Accept json
+// @Produce json
+// @Success 200 {object} dto.SuccessResponse{data=dto.MessageStatsResponse}
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /messages/stats [get]
 func (h *MessageHandler) GetMessageStats(c *gin.Context) {
 	stats, err := h.messageUseCase.GetMessageStats(c.Request.Context())
 	if err != nil {
@@ -119,6 +163,18 @@ func (h *MessageHandler) GetMessageStats(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.NewSuccessResponse("Message statistics retrieved successfully", response))
 }
 
+// SendMessage godoc
+// @Summary Send a specific message
+// @Description Send a message by its ID
+// @Tags messages
+// @Accept json
+// @Produce json
+// @Param id path string true "Message ID"
+// @Success 200 {object} dto.SuccessResponse{data=dto.MessageResponse}
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /messages/{id}/send [post]
 func (h *MessageHandler) SendMessage(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
