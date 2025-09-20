@@ -23,13 +23,30 @@ A robust automatic message sending system built with Go, PostgreSQL, and Redis. 
 - Redis 6+
 - Docker & Docker Compose (optional)
 
+## 🚀 Quick Start
+
+Get the service running in under 2 minutes:
+
+```bash
+# Clone and start
+git clone https://github.com/artista-qrue/message-sending-service.git
+cd message-sending-service
+docker compose up -d
+
+# Test the API
+curl http://localhost:8080/health
+
+# View Swagger docs
+open http://localhost:8080/swagger/index.html
+```
+
 ## 🛠️ Installation
 
 ### Using Docker Compose (Recommended)
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/message-sending-service.git
+   git clone https://github.com/artista-qrue/message-sending-service.git
    cd message-sending-service
    ```
 
@@ -41,13 +58,15 @@ A robust automatic message sending system built with Go, PostgreSQL, and Redis. 
 
 3. **Start the services**
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
-4. **Initialize the database**
+4. **Verify services are running**
    ```bash
-   docker-compose exec postgres psql -U insider -d insider_messaging -f /docker-entrypoint-initdb.d/init.sql
+   docker compose ps
    ```
+
+   The database is automatically initialized with the schema from `scripts/init.sql`.
 
 ### Manual Installation
 
@@ -67,11 +86,11 @@ A robust automatic message sending system built with Go, PostgreSQL, and Redis. 
 2. **Setup database**
    ```bash
    # Create user and database
-   createuser -s insider
-   createdb -O insider insider_messaging
+   createuser -s message_user
+   createdb -O message_user message_db
    
    # Run initialization script
-   psql -U insider -d insider_messaging -f scripts/init.sql
+   psql -U message_user -d message_db -f scripts/init.sql
    ```
 
 3. **Configure environment**
@@ -101,9 +120,9 @@ The application is configured via environment variables in `config.env`:
 # Database Configuration
 DB_HOST=localhost
 DB_PORT=5432
-DB_USER=insider
-DB_PASSWORD=insider123
-DB_NAME=insider_messaging
+DB_USER=message_user
+DB_PASSWORD=message123
+DB_NAME=message_db
 DB_SSL_MODE=disable
 
 # Redis Configuration
@@ -170,7 +189,39 @@ Once the service is running, access the Swagger documentation at:
 
 ## 🔄 Usage Examples
 
-### Create a Message
+### Complete Demo Workflow
+
+```bash
+# 1. Create a test message
+curl -X POST http://localhost:8080/api/v1/messages \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Hello, this is a test message!",
+    "phone_number": "+1234567890"
+  }'
+
+# 2. Check scheduler status (should be running by default)
+curl http://localhost:8080/api/v1/scheduler/status
+
+# 3. Get message statistics
+curl http://localhost:8080/api/v1/messages/stats
+
+# 4. Send a specific message manually
+curl -X POST http://localhost:8080/api/v1/messages/{message-id}/send
+
+# 5. View sent messages with pagination
+curl "http://localhost:8080/api/v1/messages/sent?page=1&limit=10"
+
+# 6. Stop automatic sending if needed
+curl -X POST http://localhost:8080/api/v1/scheduler/stop
+
+# 7. Restart automatic sending
+curl -X POST http://localhost:8080/api/v1/scheduler/start
+```
+
+### Individual API Calls
+
+#### Create a Message
 ```bash
 curl -X POST http://localhost:8080/api/v1/messages \
   -H "Content-Type: application/json" \
@@ -180,17 +231,17 @@ curl -X POST http://localhost:8080/api/v1/messages \
   }'
 ```
 
-### Start Automatic Sending
+#### Start Automatic Sending
 ```bash
 curl -X POST http://localhost:8080/api/v1/scheduler/start
 ```
 
-### Get Scheduler Status
+#### Get Scheduler Status
 ```bash
 curl http://localhost:8080/api/v1/scheduler/status
 ```
 
-### Get Sent Messages
+#### Get Sent Messages
 ```bash
 curl "http://localhost:8080/api/v1/messages/sent?page=1&limit=10"
 ```
@@ -239,24 +290,51 @@ make test-coverage
 make test-integration
 ```
 
+### Available Make Commands
+```bash
+make help          # Show all available commands
+make build          # Build the application
+make run            # Run the application locally
+make test           # Run tests
+make test-coverage  # Run tests with coverage
+make docker-build   # Build Docker image
+make docker-up      # Start Docker services
+make docker-down    # Stop Docker services
+make docker-logs    # View Docker logs
+make swagger        # Generate Swagger docs
+make lint           # Run linter
+make fmt            # Format code
+```
+
 ## 🐳 Docker Commands
 
 ```bash
-# Build image
+# Build and start all services
+docker compose up -d
+
+# Build image only
 docker build -t message-sending-service .
 
-# Run with docker-compose
-docker-compose up -d
-
 # View logs
-docker-compose logs -f message-service
+docker compose logs -f message-service
+
+# View all service logs
+docker compose logs -f
+
+# Restart a specific service
+docker compose restart message-service
 
 # Stop services
-docker-compose down
+docker compose down
 
-# Reset database
-docker-compose down -v
-docker-compose up -d
+# Stop and remove volumes (reset database)
+docker compose down -v
+
+# Check service status
+docker compose ps
+
+# Execute commands in running container
+docker compose exec message-service /bin/sh
 ```
 
 ## 📊 Monitoring
@@ -292,8 +370,11 @@ swag init -g cmd/server/main.go
 
 ### Database Migrations
 ```bash
-# Run init script
-psql -U insider -d insider_messaging -f scripts/init.sql
+# Run init script locally
+psql -U message_user -d message_db -f scripts/init.sql
+
+# Or with Docker
+docker compose exec postgres psql -U message_user -d message_db -f /docker-entrypoint-initdb.d/init.sql
 ```
 
 ### Adding New Features
@@ -314,7 +395,7 @@ psql -U insider -d insider_messaging -f scripts/init.sql
    brew services list | grep postgresql
    
    # Test connection
-   psql -U insider -d insider_messaging -c "SELECT 1;"
+   psql -U message_user -d message_db -c "SELECT 1;"
    ```
 
 2. **Redis Connection Error**
