@@ -1,0 +1,152 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+main
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+coverage.html
+coverage.out
+coverage.xml
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+config.env
+*.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Docker volumes and data
+postgres_data/
+redis_data/
+pgdata/
+redisdata/
+*.volume
+
+# Docker related
+.dockerignore
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
+log/
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Build artifacts
+*.tar.gz
+*.zip
+*.tar
+*.deb
+*.rpm
+
+# Generated files (auto-generated, will be regenerated)
+docs/swagger.json
+docs/swagger.yaml
+
+# Testing
+test_results/
+.coverage/
+coverage/
+.nyc_output/
+junit.xml
+test-reports/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Security files (should never be committed)
+*.key
+*.pem
+*.crt
+*.p12
+secrets/
+certs/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Node.js (if you have any frontend components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cache directories
+.cache/
+.npm/
+.yarn/
+
+# Editor directories and files
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+
+# Profiling data
+*.prof
+*.pprof
+
+# Memory dumps
+*.hprof
+
+# Local development
+local/
+dev/
+
+# CI/CD
+.github/workflows/secrets.yml
+
+# Kubernetes
+*.yaml.bak
+*.yml.bak
